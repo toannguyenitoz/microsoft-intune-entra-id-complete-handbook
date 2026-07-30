@@ -1,0 +1,178 @@
+name: Standardize handbook visuals
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'assets/generated/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  standardize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate illustrations and update Markdown
+        shell: python
+        run: |
+          from pathlib import Path
+          import html
+          import re
+
+          root = Path('.')
+          asset_dir = root / 'assets' / 'generated'
+          asset_dir.mkdir(parents=True, exist_ok=True)
+
+          files = sorted((root / 'docs').glob('*.md'))
+          files += [root / 'labs' / 'README.md', root / 'scripts' / 'README.md', root / 'templates' / 'README.md']
+
+          HEADER_START = '<!-- HANDBOOK-HEADER:START -->'
+          HEADER_END = '<!-- HANDBOOK-HEADER:END -->'
+          FOOTER_START = '<!-- HANDBOOK-FOOTER:START -->'
+          FOOTER_END = '<!-- HANDBOOK-FOOTER:END -->'
+
+          def clean_title(text, fallback):
+              match = re.search(r'^#\s+(.+)$', text, flags=re.MULTILINE)
+              title = match.group(1).strip() if match else fallback
+              return re.sub(r'^[^A-Za-z0-9]+\s*', '', title)
+
+          def slug_for(path):
+              if path.name == 'README.md':
+                  return path.parent.name + '-guide'
+              return path.stem
+
+          def make_svg(title, subtitle, number=''):
+              safe_title = html.escape(title)
+              safe_subtitle = html.escape(subtitle)
+              badge = html.escape(number)
+              return f'''<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="420" viewBox="0 0 1400 420" role="img" aria-label="{safe_title}">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#061a3a"/>
+              <stop offset="0.55" stop-color="#073b78"/>
+              <stop offset="1" stop-color="#0078d4"/>
+            </linearGradient>
+            <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".28"/></filter>
+          </defs>
+          <rect width="1400" height="420" rx="28" fill="url(#bg)"/>
+          <circle cx="1210" cy="105" r="155" fill="#33a7ff" opacity=".16"/>
+          <circle cx="1305" cy="270" r="125" fill="#6cc24a" opacity=".13"/>
+          <g transform="translate(965 70)" filter="url(#shadow)">
+            <path d="M120 30c58 0 105 42 113 97 44 5 79 42 79 88 0 49-40 89-89 89H77C34 304 0 269 0 226c0-39 28-72 65-79 4-65 56-117 120-117z" fill="#f7fbff"/>
+            <path d="M150 105l70 27v54c0 55-35 96-70 111-35-15-70-56-70-111v-54z" fill="#0078d4"/>
+            <path d="M116 184l23 23 48-55" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="235" y="198" width="92" height="72" rx="12" fill="#5c2d91"/>
+            <circle cx="281" cy="178" r="28" fill="#6cc24a"/>
+          </g>
+          <g transform="translate(55 45)">
+            <rect width="48" height="48" fill="#f25022"/><rect x="54" width="48" height="48" fill="#7fba00"/>
+            <rect y="54" width="48" height="48" fill="#00a4ef"/><rect x="54" y="54" width="48" height="48" fill="#ffb900"/>
+            <text x="125" y="42" fill="#fff" font-family="Segoe UI,Arial" font-size="34" font-weight="700">Microsoft Intune &amp; Entra ID</text>
+            <text x="125" y="82" fill="#bfe2ff" font-family="Segoe UI,Arial" font-size="24">Complete Setup Handbook</text>
+          </g>
+          <g transform="translate(55 175)">
+            <text x="0" y="0" fill="#6cc24a" font-family="Segoe UI,Arial" font-size="28" font-weight="700">{badge}</text>
+            <text x="0" y="58" fill="#fff" font-family="Segoe UI,Arial" font-size="47" font-weight="800">{safe_title}</text>
+            <text x="0" y="108" fill="#d8edff" font-family="Segoe UI,Arial" font-size="25">{safe_subtitle}</text>
+          </g>
+          <rect y="370" width="1400" height="50" fill="#03132c" opacity=".96"/>
+          <text x="55" y="402" fill="#fff" font-family="Segoe UI,Arial" font-size="18" font-weight="600">Toan Nguyen IT-Oz  •  Adelaide, South Australia</text>
+          <text x="1345" y="402" text-anchor="end" fill="#9dd6ff" font-family="Segoe UI,Arial" font-size="18">#ToanNguyenITOz</text>
+          </svg>'''
+
+          subtitles = {
+            '01': 'Build the foundation for a secure and manageable cloud environment.',
+            '02': 'Configure domains, DNS verification and group-based licensing.',
+            '03': 'Design identities, groups, guest access, RBAC and least privilege.',
+            '04': 'Secure authentication and understand cloud and hybrid identity.',
+            '05': 'Activate Intune, configure automatic enrollment and restrictions.',
+            '06': 'Choose the right enrollment method for each platform and ownership model.',
+            '07': 'Protect endpoints with configuration, compliance and Conditional Access.',
+            '08': 'Deploy applications, manage updates, monitor health and troubleshoot.',
+            '09': 'Validate every critical control before production rollout.',
+            '10': 'Provision Windows devices with a cloud-driven zero-touch experience.',
+            '11': 'Package, detect, deploy and troubleshoot Win32 applications.',
+            '12': 'Use evidence-led diagnostics to resolve enrollment, policy and app failures.'
+          }
+
+          for path in files:
+              if not path.exists():
+                  continue
+              text = path.read_text(encoding='utf-8')
+              title = clean_title(text, path.stem.replace('-', ' ').title())
+              module = path.stem[:2] if path.parent.name == 'docs' else ''
+              subtitle = subtitles.get(module, {
+                  'labs': 'Hands-on scenarios for building practical Microsoft cloud administration skills.',
+                  'scripts': 'PowerShell diagnostics and automation for endpoint support workflows.',
+                  'templates': 'Reusable records, checklists and standards for controlled deployments.'
+              }.get(path.parent.name, 'Practical Microsoft cloud administration guidance.'))
+
+              slug = slug_for(path)
+              svg_path = asset_dir / f'{slug}.svg'
+              svg_path.write_text(make_svg(title, subtitle, f'MODULE {module}' if module else path.parent.name.upper()), encoding='utf-8')
+
+              rel_root = '..' if path.parent.name in {'docs','labs','scripts','templates'} else '.'
+              rel_img = f'../assets/generated/{slug}.svg'
+              header = f'''{HEADER_START}
+<div align="center">
+
+<img src="{rel_img}" alt="{title}" width="100%" />
+
+[![Microsoft Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4?logo=microsoft&logoColor=white)](https://learn.microsoft.com/mem/intune/)
+[![Microsoft Entra ID](https://img.shields.io/badge/Microsoft-Entra_ID-5C2D91?logo=microsoftazure&logoColor=white)](https://learn.microsoft.com/entra/identity/)
+[![Level](https://img.shields.io/badge/Level-Hands--on-success)](../README.md)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen)](../README.md)
+
+[🏠 Handbook Home](../README.md) · [🧪 Labs](../labs/README.md) · [⚡ Scripts](../scripts/README.md) · [📋 Templates](../templates/README.md)
+
+</div>
+{HEADER_END}
+'''
+              footer = f'''
+{FOOTER_START}
+---
+
+<div align="center">
+
+### 👨‍💻 Xuan Toan Nguyen
+
+**IT Support · Systems Administration · Microsoft 365 · Azure · Modern Workplace**  
+📍 Adelaide, South Australia  
+🏅 Silver Medalist — WorldSkills Australia SA Regional Competition 2026, Cloud Computing
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Toan%20Nguyen-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/toan-nguyen-it-oz)
+[![GitHub](https://img.shields.io/badge/GitHub-toannguyenitoz-181717?logo=github&logoColor=white)](https://github.com/toannguyenitoz)
+[![Repository](https://img.shields.io/badge/Repository-Intune%20%26%20Entra%20Handbook-0078D4?logo=github&logoColor=white)](https://github.com/toannguyenitoz/microsoft-intune-entra-id-complete-handbook)
+
+**#MicrosoftIntune · #MicrosoftEntraID · #Microsoft365 · #ModernWorkplace · #ToanNguyenITOz**
+
+[⬆ Back to Top](#top) · [🏠 Back to Handbook](../README.md)
+
+</div>
+{FOOTER_END}
+'''
+
+              text = re.sub(re.escape(HEADER_START) + r'.*?' + re.escape(HEADER_END) + r'\n?', '', text, flags=re.S)
+              text = re.sub(re.escape(FOOTER_START) + r'.*?' + re.escape(FOOTER_END) + r'\n?', '', text, flags=re.S)
+              text = '<a id="top"></a>\n\n' + header + '\n' + text.strip() + '\n' + footer
+              path.write_text(text, encoding='utf-8')
+
+      - name: Commit generated handbook updates
+        run: |
+          if git diff --quiet; then
+            echo "No documentation changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs labs scripts templates assets/generated
+          git commit -m "docs: add module illustrations and consistent headers and footers"
+          git push
