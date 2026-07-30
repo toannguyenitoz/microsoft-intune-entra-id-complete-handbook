@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/images/00-handbook-cover.svg" alt="Microsoft Intune and Entra ID Complete Setup Handbook" width="100%" />
+
 # ☁️ Microsoft Intune & Entra ID Complete Setup Handbook
 
 ### A practical, lab-driven guide for building, securing, managing, and troubleshooting a modern Microsoft cloud environment
@@ -21,13 +23,7 @@
 
 ## 📘 About This Repository
 
-This repository is a complete Microsoft Intune and Microsoft Entra ID learning handbook designed for:
-
-- IT Support and Service Desk technicians
-- Endpoint and Modern Workplace administrators
-- Microsoft 365 administrators
-- System administrators moving from on-premises AD to cloud management
-- Students preparing for practical labs, interviews, or Microsoft certification paths
+This repository is a complete Microsoft Intune and Microsoft Entra ID learning handbook designed for IT Support, Service Desk, Endpoint, Modern Workplace, Microsoft 365, and Systems Administration professionals.
 
 The content follows a logical tenant-to-production sequence and includes portal paths, implementation checklists, PowerShell examples, lab exercises, troubleshooting workflows, and production-readiness guidance.
 
@@ -76,38 +72,33 @@ The content follows a logical tenant-to-production sequence and includes portal 
 
 ---
 
+## 🖼️ Visual Handbook
+
+| Section | Illustration |
+|---|---|
+| 01 — Fundamentals | ![](assets/images/01-fundamentals.svg) |
+| 02 — Domain & Licensing | ![](assets/images/02-domain-licensing.svg) |
+| 03 — Users, Groups & RBAC | ![](assets/images/03-users-groups-rbac.svg) |
+| 04 — Identity & Authentication | ![](assets/images/04-identity-authentication.svg) |
+| 05 — Intune Activation | ![](assets/images/05-intune-activation-enrollment.svg) |
+| 06 — Device Enrollment | ![](assets/images/06-device-enrollment.svg) |
+| 07 — Compliance & Security | ![](assets/images/07-compliance-security.svg) |
+| 08 — Apps, Updates & Reporting | ![](assets/images/08-apps-updates-reporting.svg) |
+| 09 — Production Readiness | ![](assets/images/09-readiness-checklist.svg) |
+| 10 — Windows Autopilot | ![](assets/images/10-windows-autopilot.svg) |
+| 11 — Win32 App Packaging | ![](assets/images/11-win32-app-packaging.svg) |
+| 12 — Troubleshooting | ![](assets/images/12-troubleshooting-playbook.svg) |
+
+---
+
 ## 🏗️ Recommended Setup Flow
 
 ```text
-Tenant
-  ↓
-Custom Domain
-  ↓
-Licensing
-  ↓
-Users and Groups
-  ↓
-RBAC and Administrative Roles
-  ↓
-MFA and SSPR
-  ↓
-Intune Activation
-  ↓
-Enrollment Configuration
-  ↓
-Device Enrollment
-  ↓
-Configuration Profiles
-  ↓
-Compliance Policies
-  ↓
-Conditional Access
-  ↓
-Endpoint Security
-  ↓
-Applications and Updates
-  ↓
-Reporting and Troubleshooting
+Tenant → Custom Domain → Licensing → Users and Groups → RBAC
+→ MFA and SSPR → Intune Activation → Enrollment Configuration
+→ Device Enrollment → Configuration Profiles → Compliance Policies
+→ Conditional Access → Endpoint Security → Apps and Updates
+→ Reporting and Troubleshooting
 ```
 
 ---
@@ -151,17 +142,15 @@ GRP-Conditional-Access-Pilot
 
 ---
 
-## 🔐 Security Principles Used Throughout This Handbook
+## 🔐 Security Principles
 
-- Apply least privilege
-- Separate daily admin and emergency access accounts
-- Use pilot groups before production rollout
-- Require MFA for administrators
-- Maintain at least two emergency access accounts
-- Use device compliance with Conditional Access
-- Prefer cloud-native management where practical
-- Document every production policy and assignment
-- Monitor sign-in logs, audit logs, deployment reports, and service health
+- Apply least privilege and separate daily admin from emergency access accounts.
+- Require MFA for administrators and maintain at least two emergency access accounts.
+- Use pilot groups before production rollout.
+- Combine device compliance with Conditional Access.
+- Prefer cloud-native management where practical.
+- Document every production policy, assignment, exception, and rollback plan.
+- Monitor sign-in logs, audit logs, deployment reports, and service health.
 
 ---
 
@@ -171,49 +160,18 @@ GRP-Conditional-Access-Pilot
 microsoft-intune-entra-id-complete-handbook/
 ├── README.md
 ├── LICENSE
-├── docs/
-│   ├── 01-fundamentals-tenant-prerequisites.md
-│   ├── 02-custom-domain-licensing.md
-│   ├── 03-users-groups-guests-rbac.md
-│   ├── 04-identity-authentication-hybrid.md
-│   ├── 05-intune-activation-enrollment.md
-│   ├── 06-device-enrollment-methods.md
-│   ├── 07-compliance-configuration-security.md
-│   ├── 08-apps-updates-reporting.md
-│   ├── 09-final-readiness-checklist.md
-│   ├── 10-windows-autopilot.md
-│   ├── 11-win32-app-packaging.md
-│   └── 12-troubleshooting-playbook.md
-├── labs/
-│   └── README.md
-├── scripts/
-│   ├── README.md
-│   ├── Get-IntuneDeviceDiagnostics.ps1
-│   └── Test-IntunePrerequisites.ps1
-└── templates/
-    ├── README.md
-    ├── application-deployment-checklist.md
-    ├── conditional-access-change-record.md
-    └── policy-design-template.md
+├── assets/images/               # Cover and section illustrations
+├── docs/                        # 12 handbook modules
+├── labs/README.md               # Hands-on lab scenarios
+├── scripts/                     # PowerShell diagnostics
+└── templates/                   # Reusable operational templates
 ```
 
 ---
 
 ## 🎯 Key Outcomes
 
-After completing the handbook, you should be able to:
-
-- Configure a Microsoft 365 and Intune tenant foundation
-- Add and validate a custom domain
-- Create users, groups, guests, dynamic groups, and role assignments
-- Configure MFA, SSPR, authentication methods, and hybrid identity basics
-- Enable automatic enrollment and enrollment restrictions
-- Enrol Windows, Android, iOS/iPadOS, and macOS devices
-- Create configuration, compliance, Conditional Access, and endpoint security policies
-- Package and deploy Microsoft 365, Store, and Win32 applications
-- Configure update rings, feature updates, and quality updates
-- Read Intune logs and troubleshoot common deployment failures
-- Validate a tenant using a production-readiness checklist
+After completing the handbook, you should be able to configure a tenant foundation, add a custom domain, manage identities and roles, secure authentication, enroll multiple device platforms, deploy policies and applications, manage Windows updates, troubleshoot failures, and validate production readiness.
 
 ---
 
@@ -225,6 +183,7 @@ After completing the handbook, you should be able to:
 - [x] Troubleshooting playbook
 - [x] PowerShell diagnostics starter scripts
 - [x] Reusable operational templates
+- [x] Visual cover and illustrations for all handbook modules
 - [ ] Android Enterprise advanced scenarios
 - [ ] Apple Automated Device Enrollment
 - [ ] Microsoft Graph automation examples
@@ -240,6 +199,8 @@ Contributions, lab screenshots, corrections, and real-world troubleshooting case
 
 ---
 
+<div align="center">
+
 ## 👨‍💻 Author
 
 **Xuan Toan Nguyen**  
@@ -250,13 +211,9 @@ IT Support · Systems Administration · Microsoft 365 · Azure · Modern Workpla
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Toan%20Nguyen-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/toan-nguyen-it-oz)
 [![GitHub](https://img.shields.io/badge/GitHub-toannguyenitoz-181717?logo=github&logoColor=white)](https://github.com/toannguyenitoz)
 
----
-
-<div align="center">
-
 ### ⭐ Support the Project
 
-If this handbook is useful, please consider giving the repository a star and sharing it with other IT professionals.
+If this handbook is useful, please star the repository and share it with other IT professionals.
 
 **#MicrosoftIntune · #MicrosoftEntraID · #Microsoft365 · #ModernWorkplace · #ToanNguyenITOz**
 
